@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.1);
+      text-align: center;
+      width: 480px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    img {
+      max-width: 320px;
+      max-height: 320px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #f0f4f8;
+      color: #333;
+    }
+    td:last-child {
+      text-align: right;
+      font-weight: bold;
+    }
+    a {
+      display: inline-block;
+      margin-top: 18px;
+      text-decoration: none;
+      color: #0b84ff;
+      font-weight: bold;
+      transition: color 0.2s ease;
+    }
+    a:hover {
+      color: #086cd3;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Prediction Result</h2>
+    <img src="{{ image_data }}" alt="Uploaded Image">
+    <table>
+      <tr><th>Class ID</th><th>Probability</th></tr>
+      {% for idx, prob in rows %}
+        <tr>
+          <td>{{ idx }}</td>
+          <td>{{ '%.4f'|format(prob) }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    <a href="/">⬅️ Back</a>
+  </div>
+</body>
+</html>
