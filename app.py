@@ -7,13 +7,17 @@ import torch.nn.functional as F
 from torchvision import transforms, models
 from torchvision.models import MobileNet_V3_Large_Weights
 
-app = FastAPI()
+app = FastAPI() 
 templates = Jinja2Templates(directory="templates")
 
 # model setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = models.mobilenet_v3_large(weights=MobileNet_V3_Large_Weights.DEFAULT)
+weights = MobileNet_V3_Large_Weights.DEFAULT
+model = models.mobilenet_v3_large(weights=weights)
 model.eval().to(device)
+
+# ✅ Get ImageNet class labels
+imagenet_labels = weights.meta["categories"]
 
 preprocess = transforms.Compose([
     transforms.Resize(256),
@@ -41,11 +45,16 @@ async def predict(request: Request, file: UploadFile = File(...)):
     top_probs = topk.values[0].cpu().tolist()
     top_idxs  = topk.indices[0].cpu().tolist()
 
+    # ✅ Map IDs to human-readable labels
+    top_labels = [imagenet_labels[idx] for idx in top_idxs]
+
     b64 = base64.b64encode(img_bytes).decode("utf-8")
     mime = file.content_type or "image/jpeg"
     data_url = f"data:{mime};base64,{b64}"
 
-    rows = zip(top_idxs, top_probs)  # pass to template
+    # ✅ Pass names + probabilities
+    rows = zip(top_labels, top_probs)
+
     return templates.TemplateResponse("result.html", {
         "request": request,
         "image_data": data_url,
